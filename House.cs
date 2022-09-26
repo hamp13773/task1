@@ -1,18 +1,25 @@
 using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
+
 public class House : MonoBehaviour
 {
-    [SerializeField] private AudioSource _audioSource;
-    [SerializeField] private float recoveryRate;
-
+    private readonly float recoveryRate = 0.2f;
     private readonly float _minVolume = 0;
     private readonly float _maxVolume = 1;
     private bool _isProvoke = false;
 
+    private AudioSource _audioSource;
+
     private void OnEnable()
     {
         _audioSource.Play();
+    }
+
+    private void Awake()
+    {
+        _audioSource = GetComponent<AudioSource>();
     }
 
     private void Update()
