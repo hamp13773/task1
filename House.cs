@@ -14,12 +14,8 @@ public class House : MonoBehaviour
 
     private void OnEnable()
     {
-        _audioSource.Play();
-    }
-
-    private void Awake()
-    {
         _audioSource = GetComponent<AudioSource>();
+        _audioSource.Play();
     }
 
     private void Update()
