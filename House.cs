@@ -27,7 +27,7 @@ public class House : MonoBehaviour
         StartCoroutine(ChangeVolume(_minVolume));
     }
 
-    public IEnumerator ChangeVolume(float volumeToChange)
+    private IEnumerator ChangeVolume(float volumeToChange)
     {
         while (_audioSource.volume != volumeToChange)
         {
