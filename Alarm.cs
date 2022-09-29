@@ -8,7 +8,10 @@ public class Alarm : MonoBehaviour
 {
     private AudioSource _audioSource;
     private readonly float recoveryRate = 0.0002f;
-
+    private void OnEnable()
+    {
+        _audioSource = GetComponent<AudioSource>();
+    }
     public IEnumerator ChangeVolume(float volumeToChange)
     {
         while (_audioSource.volume != volumeToChange)
