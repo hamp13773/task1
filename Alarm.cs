@@ -7,36 +7,46 @@ using UnityEngine;
 public class Alarm : MonoBehaviour
 {
     private AudioSource _audioSource;
-    private House _house;
-    private readonly float recoveryRate = 0.002f;
+    private readonly float recoveryRate = 0.0002f;
     private readonly float _minVolume = 0;
     private readonly float _maxVolume = 1;
+    private Coroutine _increaseVolume;
+    private Coroutine _decreaseVolume;
+
     private void OnEnable()
     {
         _audioSource = GetComponent<AudioSource>();
-        _house = GetComponent<House>();
     }
-
-    private void Update()
+    private void OnTriggerStay2D(Collider2D collision)
     {
-        if (_house.IsEnter == true)
+        if (collision.TryGetComponent<Thief>(out Thief thief))
         {
-            StopCoroutine(ChangeVolume(_minVolume));
             StartCoroutine(ChangeVolume(_maxVolume));
-        }
 
-        else
-        { 
-            StopCoroutine(ChangeVolume(_maxVolume));
-            StartCoroutine(ChangeVolume(_minVolume));
+            if (_increaseVolume != null)
+            {
+                StopCoroutine(_increaseVolume);
+                _increaseVolume = StartCoroutine(ChangeVolume(_maxVolume));
+            }
         }
     }
 
-    private IEnumerator ChangeVolume(float volumeToChange)
+    private void OnTriggerExit2D(Collider2D collision)
     {
-        while (_audioSource.volume != volumeToChange)
+        StartCoroutine(ChangeVolume(_minVolume));
+
+        if (_decreaseVolume != null)
         {
-            _audioSource.volume = Mathf.MoveTowards(_audioSource.volume, volumeToChange, recoveryRate * Time.deltaTime);
+            StopCoroutine(_decreaseVolume);
+            _decreaseVolume = StartCoroutine(ChangeVolume(_minVolume));
+        }
+    }
+
+    private IEnumerator ChangeVolume(float targetVolume)
+    {
+        while (_audioSource.volume != targetVolume)
+        {
+            _audioSource.volume = Mathf.MoveTowards(_audioSource.volume, targetVolume, recoveryRate);
             yield return null;
         }
     }
