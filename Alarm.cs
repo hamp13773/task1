@@ -3,35 +3,29 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
+[RequireComponent (typeof(House))]
 
 public class Alarm : MonoBehaviour
 {
-    private AudioSource _audioSource;
     private readonly float recoveryRate = 0.0002f;
-    private readonly float _minVolume = 0;
-    private readonly float _maxVolume = 1;
+    private AudioSource _audioSource;
     private Coroutine _increaseVolume;
     private Coroutine _decreaseVolume;
+    private readonly float _minVolume = 0;
+    private readonly float _maxVolume = 1;
 
-    private void OnEnable()
+    public void IncreaseVolume()
     {
-        _audioSource = GetComponent<AudioSource>();
-    }
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        if (collision.TryGetComponent<Thief>(out Thief thief))
+        StartCoroutine(ChangeVolume(_maxVolume));
+
+        if (_increaseVolume != null)
         {
-            StartCoroutine(ChangeVolume(_maxVolume));
-
-            if (_increaseVolume != null)
-            {
-                StopCoroutine(_increaseVolume);
-                _increaseVolume = StartCoroutine(ChangeVolume(_maxVolume));
-            }
+            StopCoroutine(_increaseVolume);
+            _increaseVolume = StartCoroutine(ChangeVolume(_maxVolume));
         }
     }
 
-    private void OnTriggerExit2D(Collider2D collision)
+    public void DecreaseVolume()
     {
         StartCoroutine(ChangeVolume(_minVolume));
 
@@ -40,6 +34,11 @@ public class Alarm : MonoBehaviour
             StopCoroutine(_decreaseVolume);
             _decreaseVolume = StartCoroutine(ChangeVolume(_minVolume));
         }
+    }
+
+    private void OnEnable()
+    {
+        _audioSource = GetComponent<AudioSource>();
     }
 
     private IEnumerator ChangeVolume(float targetVolume)
